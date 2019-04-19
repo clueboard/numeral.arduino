@@ -95,14 +95,16 @@ const int PROGMEM digitSegments[11][7] {
  */
 class Numeral {
   public:
-    Numeral(int deviceAddress0, int deviceAddress1, int deviceAddress2, int deviceAddress3);
-    int count;
-    int i2cAddresses[4];
+    void i2cScan(void);
+    void addNumeral(int i2cAddress);
+    void setup(void);
     void writeDigit(int numeral, int digit, int r, int g, int b);
     void writeNumber(int number, int r, int g, int b);
     void segment(int numeral, int segment, int r, int g, int b);
     void power(int numeral, bool shutdownState);
     void update(void);
+    int count;
+    int i2cAddresses[4];
     int ledState[4][29] = {
         {ledRegisterStart,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         {ledRegisterStart,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -116,7 +118,6 @@ class Numeral {
         {pwmRegisterStart,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     };
   private:
-    void _i2cScan(void);
     void _i2cWrite(int ICAddress, int *data, int num);
     void _updateLED(int numeral);
     void _updatePWM(int numeral);

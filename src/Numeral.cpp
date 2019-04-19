@@ -26,25 +26,6 @@
 #include "Numeral.h"
 #include <Wire.h>
 
-/* Support for using the Clueboard Numeral (i2c RGB 7 Segment display) from Arduino
- * 
- * # Glossary
- *   The following variables are used frequently in this library.
- *   
- * `int digit`
- *    A digit that is displayed on a numeral.
- *    
- * `int numeral`
- *     Used to distinguish up to 4 Numerals connected to the same 
- *     i2c bus. Numerals are auto-detected and are typicaly 
- *     indexed in descending order, IE `{0x73, 0x72, 0x71, 0x70} when 
- *     all 4 are connected.
- *     
- * `int segment`
- *     Labeled `A, B, C, D, E, F, G, and DP, this is used with `segmentMap` 
- *     to determine which LEDs are associated with each segment.
- */
-
 /* Gamma correction table to make the LED brightness scale more linearly.
  */
 const int PROGMEM gamma8[] = {
@@ -66,43 +47,30 @@ const int PROGMEM gamma8[] = {
   215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255
 };
 
-Numeral::Numeral(int deviceAddress0, int deviceAddress1, int deviceAddress2, int deviceAddress3) {
+void Numeral::setup(void) {
     Wire.begin();
-
-    if (deviceAddress0 == 0 && deviceAddress1 == 0 && deviceAddress2 == 0 && deviceAddress3 == 0) {
-        _i2cScan();
-    } else {
-        if (deviceAddress0 != 0) {
-            i2cAddresses[count] = deviceAddress0;
-            count++;
-        }
-        if (deviceAddress1 != 0) {
-            i2cAddresses[count] = deviceAddress1;
-            count++;
-        }
-        if (deviceAddress2 != 0) {
-            i2cAddresses[count] = deviceAddress2;
-            count++;
-        }
-        if (deviceAddress3 != 0) {
-            i2cAddresses[count] = deviceAddress3;
-            count++;
-        }
+    if (count == 0) {
+        i2cScan();
     }
 
     // Iterate through our found numerals and initialize each one.
     for (int numeral = 0; numeral < count; numeral++) {
-/*
         _writeRegister(numeral, resetRegister, 0x00);      // Set IC to default state
-        _writeRegister(numeral, pwmFrequencyRegister, 1);  // Set pwm freq to 22kHz
         _updatePWM(numeral);                               // Set all PWM to 0 (off)
         _updateLED(numeral);                               // Set all LED to on
+        _writeRegister(numeral, pwmFrequencyRegister, 1);  // Set pwm freq to 22kHz
         power(numeral, 1);                                 // Begin normal operation
-*/
     }
 }
 
-void Numeral::_i2cScan(void) {
+void Numeral::addNumeral(int i2cAddress) {
+  /* Add a numeral to the list of known numeral devices.
+   */
+  i2cAddresses[count] = i2cAddress;
+  count++;
+}
+
+void Numeral::i2cScan(void) {
   /* Scan the i2c bus looking for numerals. 
    *  
    * There are only 4 addresses to check and we don't verify that the device
@@ -111,15 +79,11 @@ void Numeral::_i2cScan(void) {
    * that event users will need to pass addresses to Numeral::Numeral().
    */
   for (int address = numeralAddressEnd; address > numeralAddressStart; address--) {
-/*
     Wire.beginTransmission(address);
     
     if (Wire.endTransmission() == 0) {
-      // We got an answer from a device on this address, add it to the list.
-      i2cAddresses[count] = address;
-      count++;
+      addNumeral(address);
     }
-*/
   }
 }
 
