@@ -73,8 +73,8 @@ void Numeral::addNumeral(int i2cAddress) {
 }
 
 void Numeral::i2cScan(void) {
-    /* Scan the i2c bus looking for numerals. 
-     *  
+    /* Scan the i2c bus looking for numerals.
+     *
      * There are only 4 addresses to check and we don't verify that the device
      * that responds is an is31fl3235a. It's possible we may cause problems if
      * other devices on the bus are using one of the 4 addresses we can use. In
@@ -91,7 +91,7 @@ void Numeral::i2cScan(void) {
 
 void Numeral::_writeRegister(int numeral, int ICRegister, int data) {
     /* Write a single byte to a register on the IC.
-     *  
+     *
      *  `int numeral`
      *      The numeral to write to (0-3)
      *
@@ -113,7 +113,7 @@ void Numeral::_writeRegister(int numeral, int ICRegister, int data) {
 
 void Numeral::_i2cWrite(int ICAddress, int *data, int num) {
     /* Low level function to write data to the i2c bus.
-     *  
+     *
      *  `ICAddress`
      *      The address of the ic we're writing to
      *
@@ -145,10 +145,10 @@ void Numeral::_updatePWM(int numeral) {
 
 void Numeral::power(int numeral, bool shutdownState) {
     /* Turns the IC on and off for power savings
-     *  
+     *
      * `numeral`
      *     The numeral to set
-     *     
+     *
      * `shutdownState`
      *     Whether the IC should be on (1) or off (0)
      */
@@ -165,13 +165,13 @@ void Numeral::update(void) {
 }
 
 void Numeral::segment(int numeral, int segment, int r, int g, int b) {
-    /* Set the color for an individual segment. Channel values will be 
+    /* Set the color for an individual segment. Channel values will be
      *  gamma corrected for a more linear brightness response.
-     *  
+     *
      * `segment`
-     *     The segment to set a color for. Use one of the segment<L> 
+     *     The segment to set a color for. Use one of the segment<L>
      *     variables above, such as `segmentA`.
-     * 
+     *
      * `r`
      *     Brightness for the Red channel (0-255)
      *
@@ -192,19 +192,19 @@ void Numeral::segment(int numeral, int segment, int r, int g, int b) {
 
 void Numeral::writeDigit(int numeral, int digit, int r, int g, int b) {
     /* Display a digit (0-9) on a single numeral.
-     *  
+     *
      * `numeral`
      *    The numeral to display this digit on
-     *  
+     *
      * `digit`
      *    The digit to display
-     *  
+     *
      * `r`
      *    How bright the red channel should be (0-255)
-     *  
+     *
      * `g`
      *    How bright the green channel should be (0-255)
-     *  
+     *
      * `b`
      *    How bright the blue channel should be (0-255)
      */
@@ -215,7 +215,7 @@ void Numeral::writeDigit(int numeral, int digit, int r, int g, int b) {
             segment(numeral, seg, 0, 0, 0);
         }
     }
-  
+
     _updatePWM(numeral);
 }
 
@@ -228,49 +228,47 @@ void Numeral::writeNumber(int number, int r, int g, int b) {
      *
      * `r`
      *    How bright the red channel should be (0-255)
-     *  
+     *
      * `g`
      *    How bright the green channel should be (0-255)
-     *  
+     *
      * `b`
      *    How bright the blue channel should be (0-255)
      */
-    int ones = 10;
+
+    // Default to showing nothing on displays
     int tens = 10;
     int hundreds = 10;
     int thousands = 10;
 
-    /* Split the int into up to 4 digits.
-     */
-    if (number < 10) {
-        ones = number;
-    } else if (number < 100) {
-          tens = number / 10;
-          ones = number % 10;
-    } else if (number < 1000) {
-          hundreds = number / 100;
-          tens = (number - (hundreds*100)) / 10;
-          ones = (number - (hundreds*100)) % 10;
-    } else if (number < 10000) {
-          thousands = number / 1000;
-          hundreds = (number - (thousands*1000)) / 100;
-          tens = (number - (thousands*1000) - (hundreds*100)) / 10;
-          ones = (number - (thousands*1000) - (hundreds*100)) % 10;
-    } else {
-          thousands = number % 10000;
-          hundreds = (number - (thousands*1000)) / 100;
-          tens = (number - (thousands*1000) - (hundreds*100)) / 10;
-          ones = (number - (thousands*1000) - (hundreds*100)) % 10;
+    // Find our 4 digits.
+    if (number >= 10000) {
+        // Numbers above 10,000 are truncated due to display limitations.
+        number = number % 10000;
+    }
+    if (number >= 1000) {
+        thousands = number / 1000;
+        number = number % 1000;
+    }
+    if (number >= 100) {
+        hundreds = number / 100;
+        number = number % 100;
+    }
+    if (number >= 10) {
+        hundreds = number / 10;
+        number = number % 10;
     }
 
-    writeDigit(i2cAddresses[count - 1], ones, r, g, b);
+    // Write to the display.
+    // We assume the right-most display is #0, and they grow to the left.
+    writeDigit(0, number, r, g, b);
     if (count > 1) {
-        writeDigit(i2cAddresses[count - 2], tens, r, g, b);
+        writeDigit(1, tens, r, g, b);
     }
     if (count > 2) {
-        writeDigit(i2cAddresses[count - 3], hundreds, r, g, b);
+        writeDigit(2, hundreds, r, g, b);
     }
     if (count > 3) {
-        writeDigit(i2cAddresses[count - 4], thousands, r, g, b);
+        writeDigit(3, thousands, r, g, b);
     }
 }
