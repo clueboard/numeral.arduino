@@ -124,3 +124,10 @@ class Numeral {
         void _updatePWM(int numeral);
         void _writeRegister(int numeral, int ICRegister, int data);
 };
+
+
+/* Automatically instaniate numeral
+ */
+#ifndef NUMERAL_CPP
+Numeral numeral;
+#endif

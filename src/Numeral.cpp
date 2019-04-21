@@ -23,8 +23,10 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #include "Arduino.h"
-#include "Numeral.h"
 #include <Wire.h>
+
+#define NUMERAL_CPP  // Prevent automatic instaniation
+#include "Numeral.h"
 
 /* Gamma correction table to make the LED brightness scale more linearly.
  */

@@ -35,7 +35,7 @@ This function can be used to write a single digit to an individual numeral.
     b
         How bright the green channel should be (0-255)
 
-## `writeNumber()`
+## `numeral.writeNumber()`
 
 `void writeNumber(int number, int r, int g, int b)`
 
