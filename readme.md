@@ -87,9 +87,11 @@ void loop() {
 
 For more control over color you can exert direct control over each segment on the display. The display will not be updated immediately, you will have to manually update the display after making changes.
 
-`void segment(int numeral, int segment, int r, int g, int b)`
+## Set Individual Segments
 
-Use this function to directly control individual segments. The segments are labled 0-7 and control individual letter segments plus the dot. There are variables, `segmentA` through `segmentG` plus `segmentDP` that map to these segments.
+    void segment(int numeral, int segment, int r, int g, int b)
+
+Use this function to directly control individual segments. The segments are labled A-G plus DP and control individual letter segments plus the dot. There are variables, `segmentA` through `segmentG` plus `segmentDP` that map to these segments.
 
 **Segment Layout:**
 
@@ -101,7 +103,9 @@ Use this function to directly control individual segments. The segments are labl
     |-D-| DP
 ```
 
-`void update(void);`
+## Update Display
+
+    void update(void)
 
 Use this function to display your pending changes.
 
@@ -109,18 +113,18 @@ Use this function to display your pending changes.
 
 If you'd like more direct control over the display on the numeral you can manipulate the LED and PWM registers directly.
 
-`const int PROGMEM segmentMap[8][3]`
+    const int PROGMEM segmentMap[8][3]
 
 This is a map of segments to LED locations. The outer array maps to the segment layout above. The inner array is a triplet of Red, Green, and Blue LED indexes. You can use this to determine which LEDs correlate to particular segments.
 
-`int ledState[3][29]`
+    int ledState[3][29]
 
 This is an array of arrays that controls the on/off status of each individual LED. The first element of the array is a register address that must not be modified. The rest of the array is a boolean value that indicates if the corresponding LED should be on or off.
 
-`int pwmState[4][29]`
+    int pwmState[4][29]
 
 This is an array of arrays that controls the PWM value of each individual LED. The first element of the array is a register address that must not be modified. The rest of the array is an integer value (0-255) that sets the brightness for that LED.
 
-`void update(void);`
+    void update(void)
 
 Use this function to display your pending changes.
