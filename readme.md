@@ -58,8 +58,6 @@ This function can be used to write up to 4 digits to connected numerals.
 ```c++
 #include <Numeral.h>
 
-Numeral numeral;
-
 void setup() {
   // put your setup code here, to run once:
 
