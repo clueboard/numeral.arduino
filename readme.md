@@ -72,7 +72,7 @@ void loop() {
   /* Count from 0 to 9 to 0 in a nice minty green, getting brighter with higher numbers.
    */
   for (int i = 0; i < 10; i++) {
-    int b = (i + 3) / 13.0 * 255;      // Calculate brightness of the color based on the displayed digit
+    int b = (i + 3) / 13.0 * 255;           // Calculate brightness of the color based on the displayed digit
     numeral.writeDigit(0, i, b/3, b, b/2);  // Use ratios of each color to produce a minty green that gets brighter without changing hue
     delay(150);
   }
@@ -115,7 +115,7 @@ If you'd like more direct control over the display on the numeral you can manipu
 
 This is a map of segments to LED locations. The outer array maps to the segment layout above. The inner array is a triplet of Red, Green, and Blue LED indexes. You can use this to determine which LEDs correlate to particular segments.
 
-`int ledState[4][29]`
+`int ledState[3][29]`
 
 This is an array of arrays that controls the on/off status of each individual LED. The first element of the array is a register address that must not be modified. The rest of the array is a boolean value that indicates if the corresponding LED should be on or off.
 
